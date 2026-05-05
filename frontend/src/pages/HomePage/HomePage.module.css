@@ -1,0 +1,120 @@
+.hero {
+  text-align: center;
+  padding: var(--space-8) 0 var(--space-10);
+}
+
+.title {
+  font-size: clamp(2rem, 4.5vw, var(--font-size-4xl));
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.accent {
+  color: var(--color-primary);
+}
+
+.subtitle {
+  margin-top: var(--space-4);
+  font-size: var(--font-size-lg);
+  color: var(--color-text-secondary);
+  max-width: 620px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.uploadCard {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-xl);
+  padding: var(--space-8);
+  box-shadow: var(--shadow-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+@media (max-width: 640px) {
+  .uploadCard {
+    padding: var(--space-4);
+  }
+}
+
+.previewBlock {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.previewHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.previewTitle {
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-medium);
+}
+
+.clearLink {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  background: none;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+}
+
+.clearLink:hover:not(:disabled) {
+  color: var(--color-primary);
+  background-color: var(--color-primary-soft);
+}
+
+.submitRow {
+  display: flex;
+  justify-content: center;
+  padding-top: var(--space-2);
+}
+
+.steps {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+  margin-top: var(--space-12);
+}
+
+@media (min-width: 720px) {
+  .steps {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.step {
+  padding: var(--space-6);
+  background-color: var(--color-bg-muted);
+  border-radius: var(--radius-lg);
+  text-align: center;
+}
+
+.stepNumber {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-primary);
+  color: var(--color-text-inverse);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--space-3);
+}
+
+.stepTitle {
+  font-size: var(--font-size-lg);
+  margin-bottom: var(--space-2);
+}
+
+.stepText {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}

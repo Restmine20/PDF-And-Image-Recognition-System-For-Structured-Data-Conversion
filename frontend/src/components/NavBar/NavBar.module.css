@@ -1,0 +1,108 @@
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-navbar);
+  background-color: rgba(255, 255, 255, 0.92);
+  backdrop-filter: saturate(160%) blur(8px);
+  border-bottom: 1px solid var(--color-divider);
+}
+
+.inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--navbar-height);
+  gap: var(--space-6);
+  width: 100%;
+  padding: 0 var(--space-6);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  color: var(--color-text);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-lg);
+  letter-spacing: -0.01em;
+}
+
+.brand:hover {
+  color: var(--color-primary);
+}
+
+.brandIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-md);
+  background-color: var(--color-primary);
+  color: var(--color-text-inverse);
+}
+
+.brandName {
+  display: inline-block;
+}
+
+.actions {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.iconLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-full);
+  color: var(--color-text-secondary);
+  transition:
+    background-color var(--transition-base),
+    color var(--transition-base);
+}
+
+.iconLink:hover {
+  background-color: var(--color-primary-soft);
+  color: var(--color-primary);
+}
+
+.iconLinkActive {
+  background-color: var(--color-primary-soft);
+  color: var(--color-primary);
+}
+
+.iconLink svg {
+  width: 22px;
+  height: 22px;
+}
+
+.userBlock {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding-left: var(--space-3);
+  margin-left: var(--space-2);
+  border-left: 1px solid var(--color-divider);
+}
+
+.userEmail {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .brandName {
+    display: none;
+  }
+  .userEmail {
+    display: none;
+  }
+}
