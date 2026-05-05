@@ -1,0 +1,49 @@
+# swagger.yml
+
+# версия OpenAPI: важно, так как названия параметров могут меняться от версии к версии
+openapi: 3.0.0
+info: # информационный блок
+  title: "RP Flask REST API" # заголовок
+  description: "An API about saving files for processing" # описание
+  version: "1.0.0" # версия вашего API: придётся менять при дальнейшем расширении
+servers:
+  - url: "/api"
+paths:
+  /file:
+    get:
+      operationId: "primary_image_processing.get_string"
+      tags:
+        - "Documents"
+      summary: "Пример получения строки"
+      responses:
+        "200":
+          description: "Successfully get one string"
+    post:
+      operationId: "primary_image_processing.upload_file"
+      tags:
+        - "Documents"
+      summary: "Загрузка документа"
+      requestBody:
+        description: "Файл для распознавания"
+        required: True
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                # Имя поля в Multipart-запросе
+                file:
+                  type: string
+                  format: binary
+                  description: PDF или файл изображения
+            # Основное ограничение здесь:
+            encoding:
+              file:
+                contentType: application/pdf, image/png, image/jpeg
+      responses:
+        200:
+          description: Файл успешно загружен
+        422:
+          description: "Файл неверного формата, ожидается pdf или png"
+        default:
+          description: "Непредвиденная ошибка"
