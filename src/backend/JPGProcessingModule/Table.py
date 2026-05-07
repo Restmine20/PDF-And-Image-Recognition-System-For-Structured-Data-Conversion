@@ -174,8 +174,6 @@ class Table:
         # ТУТ ДИНАМИЧЕСКИ МЕНЯТЬ РАМКУ, ЧТОБЫ КОНТУР НЕ ПОПАДАЛ, ЧИСЛО ЧИСТО ПОДГОН ДЛЯ ПРИМЕРА
         cell = cell[2: cell.shape[0] - 2, 2: cell.shape[1] - 2]
 
-        Table._show_cell(cell)
-
         return pytesseract.image_to_string(cell, lang='rus+eng', config='--psm 6 --oem 3')
 
     # DEBUG
