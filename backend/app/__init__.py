@@ -4,6 +4,7 @@ import os
 from datetime import timedelta
 from flask import Blueprint
 from app.settings import Base, engine
+from app.settings import mail
 from app.models.User import User
 from app.models.Document import Document
 from app.models.Batch import Batch
@@ -18,6 +19,15 @@ def create_app():
     app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
 
     jwt.init_app(app)
+
+    app.config['MAIL_SERVER'] = os.environ["MAIL_SERVER"]
+    app.config['MAIL_PORT'] = int(os.environ["MAIL_PORT"])
+    app.config['MAIL_USE_TLS'] = True if os.environ["MAIL_USE_TLS"] == "True" else False
+    app.config['MAIL_USERNAME'] = os.environ["MAIL_USERNAME"]
+    app.config['MAIL_PASSWORD'] = os.environ["MAIL_PASSWORD"]
+    app.config['MAIL_DEFAULT_SENDER'] = os.environ["MAIL_USERNAME"]
+
+    mail.init_app(app)
 
     from app.auth.routes import auth_bp
     from app.documents.routes import documents_bp

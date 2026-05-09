@@ -4,6 +4,7 @@ from sqlalchemy import create_engine, Column, Integer, String, DateTime, text, F
 from minio import Minio
 from flask_jwt_extended import JWTManager
 import redis
+from flask_mail import Mail
 
 minio_client = Minio(
     endpoint=os.environ['MINIO_ENDPOINT'],
@@ -37,6 +38,7 @@ Base = declarative_base()
 
 
 jwt = JWTManager()
+mail = Mail()
 
 
 jwt_redis_blocklist = redis.from_url(os.environ["JWT_REDIS_BLACKLIST_URL"], decode_responses=True)

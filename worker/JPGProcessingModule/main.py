@@ -17,3 +17,4 @@ def main(source_path, workbook):
         sheet = workbook.create_sheet("From_IMAGE")
         table.save_table(sheet)
 
+

@@ -3,7 +3,7 @@ import os
 import pdfplumber
 from PDFProcessingModule.TableExtractor import TableExtractor
 from PDFProcessingModule.ImageExtractor import ImageExtractor
-from JPGProcessingModule import main as jpg_main
+from JPGProcessingModule.main import main as jpg_main
 import uuid
 
 
@@ -23,7 +23,7 @@ def main(source_path, workbook):
             table.save_table(sheet)
 
         for image in images:
-            image_path = os.path.join("temp", str(uuid.uuid4()) + ".jpg")
+            image_path = os.path.join(os.environ["TEMP_FOLDER"], str(uuid.uuid4()) + ".jpg")
             image.save(image_path)
             jpg_main(image_path, workbook)
             os.remove(image_path)
