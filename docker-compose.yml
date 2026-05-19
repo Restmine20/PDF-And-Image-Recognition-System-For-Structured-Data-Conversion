@@ -26,7 +26,7 @@ services:
     profiles:
       - main
   backend:
-    build: ./back
+    build: ./backend
     ports:
       - "8000:8000"
     depends_on:
@@ -44,7 +44,7 @@ services:
     profiles:
       - worker
   frontend:
-    build: ./front
+    build: ./frontend
     depends_on:
       - backend
     env_file:
