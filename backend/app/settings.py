@@ -17,7 +17,7 @@ global_minio_client = Minio(
     endpoint=os.environ['GLOBAL_MINIO_ENDPOINT'],
     access_key=os.environ['GLOBAL_MINIO_ROOT_USER'],
     secret_key=os.environ['GLOBAL_MINIO_ROOT_PASSWORD'],
-    secure=False
+    secure=True
 )
 
 if not minio_client.bucket_exists(os.environ["UPLOADS_BUCKET_NAME"]):

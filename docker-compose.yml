@@ -60,10 +60,14 @@ services:
       - "443:443"
     depends_on:
       - frontend
-    command: caddy reverse-proxy --from recognitionsystem.ru --to frontend:80
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
     profiles:
       - main
 
 
-#volumes:
-  #inio_storage:
+volumes:
+  caddy_data:
+  caddy_config:
