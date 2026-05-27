@@ -22,4 +22,19 @@ export const authApi = {
   me(): Promise<{ user: User }> {
     return request<{ user: User }>('/api/auth/me');
   },
+  /** Запросить восстановление пароля: бекенд сгенерирует новый и отправит на email. */
+  requestPasswordReset(email: string): Promise<void> {
+    return request<void>('/api/auth/password/reset', {
+      method: 'POST',
+      body: { email },
+      anonymous: true,
+    });
+  },
+  /** Сменить пароль авторизованного пользователя. */
+  changePassword(currentPassword: string, newPassword: string): Promise<void> {
+    return request<void>('/api/auth/password/change', {
+      method: 'POST',
+      body: { currentPassword, newPassword },
+    });
+  },
 };

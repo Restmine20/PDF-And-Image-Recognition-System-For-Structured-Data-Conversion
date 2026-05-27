@@ -104,6 +104,18 @@
   cursor: not-allowed;
 }
 
+.forgotRow {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: calc(-1 * var(--space-2));
+}
+
+.forgotRow .linkButton:disabled {
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+  text-decoration: none;
+}
+
 .footnote {
   text-align: center;
   color: var(--color-text-secondary);

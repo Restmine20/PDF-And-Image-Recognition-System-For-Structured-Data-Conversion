@@ -10,6 +10,7 @@ import { HomePage } from '@/pages/HomePage/HomePage';
 import { AuthPage } from '@/pages/AuthPage/AuthPage';
 import { HistoryPage } from '@/pages/HistoryPage/HistoryPage';
 import { ApiKeyPage } from '@/pages/ApiKeyPage/ApiKeyPage';
+import { AccountPage } from '@/pages/AccountPage/AccountPage';
 import { ProcessingPage } from '@/pages/ProcessingPage/ProcessingPage';
 import { ResultPage } from '@/pages/ResultPage/ResultPage';
 import { NotFoundPage } from '@/pages/NotFoundPage/NotFoundPage';
@@ -28,6 +29,7 @@ export default function App() {
             <Route element={<ProtectedRoute />}>
               <Route path="/history" element={<HistoryPage />} />
               <Route path="/api-key" element={<ApiKeyPage />} />
+              <Route path="/account" element={<AccountPage />} />
             </Route>
 
             <Route path="*" element={<NotFoundPage />} />

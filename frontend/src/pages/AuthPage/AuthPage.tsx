@@ -8,7 +8,7 @@ import { ApiError } from '@/types';
 
 import styles from './AuthPage.module.css';
 
-type Mode = 'login' | 'register';
+type Mode = 'login' | 'register' | 'forgot';
 
 const PASSWORD_MIN_LENGTH = 8;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -24,7 +24,7 @@ export function AuthPage() {
   const [passwordRepeat, setPasswordRepeat] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
-  const { login, register } = useAuth();
+  const { login, register, requestPasswordReset } = useAuth();
   const toast = useToast();
   const navigate = useNavigate();
   const location = useLocation();
@@ -36,10 +36,12 @@ export function AuthPage() {
   function switchMode(next: Mode) {
     setMode(next);
     setPasswordRepeat('');
+    setPassword('');
   }
 
   function validate(): string | null {
     if (!EMAIL_RE.test(email.trim())) return 'Введите корректный адрес электронной почты.';
+    if (mode === 'forgot') return null;
     if (password.length < PASSWORD_MIN_LENGTH) {
       return `Пароль должен быть не короче ${PASSWORD_MIN_LENGTH} символов.`;
     }
@@ -62,11 +64,18 @@ export function AuthPage() {
       if (mode === 'login') {
         await login(email.trim(), password);
         toast.showSuccess('С возвращением!');
-      } else {
+        navigate(from, { replace: true });
+      } else if (mode === 'register') {
         await register(email.trim(), password);
         toast.showSuccess('Аккаунт создан. Добро пожаловать!');
+        navigate(from, { replace: true });
+      } else {
+        await requestPasswordReset(email.trim());
+        toast.showSuccess(
+          'Если такой email зарегистрирован, мы отправили на него новый пароль.',
+        );
+        switchMode('login');
       }
-      navigate(from, { replace: true });
     } catch (err) {
       const message =
         err instanceof ApiError
@@ -78,40 +87,50 @@ export function AuthPage() {
     }
   }
 
+  const isForgot = mode === 'forgot';
+
   return (
     <div className="container">
       <div className={styles.card}>
         <header className={styles.header}>
           <h1 className={styles.title}>
-            {mode === 'login' ? 'Вход в RecognitionSystem' : 'Создание аккаунта'}
+            {isForgot
+              ? 'Восстановление пароля'
+              : mode === 'login'
+                ? 'Вход в RecognitionSystem'
+                : 'Создание аккаунта'}
           </h1>
           <p className={styles.subtitle}>
-            {mode === 'login'
-              ? 'Войдите, чтобы получить API-ключ и видеть историю своих загрузок.'
-              : 'Регистрация открывает доступ к API-ключу и истории обработок.'}
+            {isForgot
+              ? 'Введите email, который вы использовали при регистрации. Мы отправим на него новый пароль.'
+              : mode === 'login'
+                ? 'Войдите, чтобы получить API-ключ и видеть историю своих загрузок.'
+                : 'Регистрация открывает доступ к API-ключу и истории обработок.'}
           </p>
         </header>
 
-        <div className={styles.tabs} role="tablist">
-          <button
-            type="button"
-            role="tab"
-            aria-selected={mode === 'login'}
-            className={[styles.tab, mode === 'login' ? styles.tabActive : ''].join(' ')}
-            onClick={() => switchMode('login')}
-          >
-            Вход
-          </button>
-          <button
-            type="button"
-            role="tab"
-            aria-selected={mode === 'register'}
-            className={[styles.tab, mode === 'register' ? styles.tabActive : ''].join(' ')}
-            onClick={() => switchMode('register')}
-          >
-            Регистрация
-          </button>
-        </div>
+        {!isForgot && (
+          <div className={styles.tabs} role="tablist">
+            <button
+              type="button"
+              role="tab"
+              aria-selected={mode === 'login'}
+              className={[styles.tab, mode === 'login' ? styles.tabActive : ''].join(' ')}
+              onClick={() => switchMode('login')}
+            >
+              Вход
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={mode === 'register'}
+              className={[styles.tab, mode === 'register' ? styles.tabActive : ''].join(' ')}
+              onClick={() => switchMode('register')}
+            >
+              Регистрация
+            </button>
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className={styles.form} noValidate>
           <label className={styles.field}>
@@ -128,20 +147,22 @@ export function AuthPage() {
             />
           </label>
 
-          <label className={styles.field}>
-            <span className={styles.label}>Пароль</span>
-            <input
-              type="password"
-              autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className={styles.input}
-              placeholder={`Не короче ${PASSWORD_MIN_LENGTH} символов`}
-              minLength={PASSWORD_MIN_LENGTH}
-              required
-              disabled={submitting}
-            />
-          </label>
+          {!isForgot && (
+            <label className={styles.field}>
+              <span className={styles.label}>Пароль</span>
+              <input
+                type="password"
+                autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className={styles.input}
+                placeholder={`Не короче ${PASSWORD_MIN_LENGTH} символов`}
+                minLength={PASSWORD_MIN_LENGTH}
+                required
+                disabled={submitting}
+              />
+            </label>
+          )}
 
           {mode === 'register' && (
             <label className={styles.field}>
@@ -160,13 +181,41 @@ export function AuthPage() {
             </label>
           )}
 
+          {mode === 'login' && (
+            <div className={styles.forgotRow}>
+              <button
+                type="button"
+                className={styles.linkButton}
+                onClick={() => switchMode('forgot')}
+                disabled={submitting}
+              >
+                Забыли пароль?
+              </button>
+            </div>
+          )}
+
           <Button type="submit" size="lg" fullWidth loading={submitting}>
-            {mode === 'login' ? 'Войти' : 'Создать аккаунт'}
+            {mode === 'login'
+              ? 'Войти'
+              : mode === 'register'
+                ? 'Создать аккаунт'
+                : 'Отправить новый пароль'}
           </Button>
         </form>
 
         <p className={styles.footnote}>
-          {mode === 'login' ? (
+          {isForgot ? (
+            <>
+              Вспомнили пароль?{' '}
+              <button
+                type="button"
+                className={styles.linkButton}
+                onClick={() => switchMode('login')}
+              >
+                Войти
+              </button>
+            </>
+          ) : mode === 'login' ? (
             <>
               Ещё нет аккаунта?{' '}
               <button

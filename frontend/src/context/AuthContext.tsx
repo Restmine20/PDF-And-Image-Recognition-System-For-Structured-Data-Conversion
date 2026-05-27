@@ -20,6 +20,10 @@ interface AuthContextValue {
   login(email: string, password: string): Promise<void>;
   register(email: string, password: string): Promise<void>;
   logout(): Promise<void>;
+  /** Запросить новый пароль на email. Анонимно. */
+  requestPasswordReset(email: string): Promise<void>;
+  /** Сменить пароль текущего пользователя. */
+  changePassword(currentPassword: string, newPassword: string): Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -81,6 +85,17 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setUser(null);
   }, []);
 
+  const requestPasswordReset = useCallback(async (email: string) => {
+    await authApi.requestPasswordReset(email);
+  }, []);
+
+  const changePassword = useCallback(
+    async (currentPassword: string, newPassword: string) => {
+      await authApi.changePassword(currentPassword, newPassword);
+    },
+    [],
+  );
+
   const value = useMemo<AuthContextValue>(
     () => ({
       user,
@@ -89,8 +104,18 @@ export function AuthProvider({ children }: AuthProviderProps) {
       login,
       register,
       logout,
+      requestPasswordReset,
+      changePassword,
     }),
-    [user, isInitializing, login, register, logout],
+    [
+      user,
+      isInitializing,
+      login,
+      register,
+      logout,
+      requestPasswordReset,
+      changePassword,
+    ],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
