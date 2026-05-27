@@ -10,6 +10,7 @@ class JPGPreprocessor:
         APPROX_EPSILON = 0.03
         DOCUMENT_CONTOURS_TRIES = 3
         TAN_THRESHOLD = 2
+        MIN_DOCUMENT_SQUARE_RATIO = 3/5
 
     def __init__(self, raw_image, base_size=800):
         self._raw_image = raw_image
@@ -30,9 +31,10 @@ class JPGPreprocessor:
 
             perspective_matrix = cv2.getPerspectiveTransform(document_contour, output_points)
 
-            # DEBUG
-            #return self._raw_image
-            return cv2.warpPerspective(self._raw_image, perspective_matrix, (width, height))
+            if self._raw_image.shape[0] * self._raw_image.shape[1] * JPGPreprocessor.Config.MIN_DOCUMENT_SQUARE_RATIO \
+                    < cv2.contourArea(document_contour):
+                return cv2.warpPerspective(self._raw_image, perspective_matrix, (width, height))
+            return self._raw_image
         except ValueError:
             return self._raw_image
 
