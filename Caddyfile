@@ -1,3 +1,6 @@
 recognitionsystem.ru {
     reverse_proxy frontend:80
 }
+recognitionsystem.ru:9000 {
+    reverse_proxy minio:9000
+}
