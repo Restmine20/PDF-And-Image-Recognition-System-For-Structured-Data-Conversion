@@ -60,7 +60,7 @@ services:
       - "443:443"
     depends_on:
       - frontend
-    command: caddy reverse-proxy --from localhost --to frontend:80
+    command: caddy reverse-proxy --from recognitionsystem.ru --to frontend:80
     profiles:
       - main
 
