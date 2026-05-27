@@ -8,6 +8,7 @@ import {
   ClockIcon,
   HomeIcon,
   KeyIcon,
+  LockIcon,
   LogoutIcon,
   UserIcon,
 } from '@/components/icons';
@@ -41,6 +42,9 @@ export function NavBar() {
               </NavIconLink>
               <NavIconLink to="/api-key" label="API-ключ">
                 <KeyIcon />
+              </NavIconLink>
+              <NavIconLink to="/account" label="Профиль и смена пароля">
+                <LockIcon />
               </NavIconLink>
             </>
           )}

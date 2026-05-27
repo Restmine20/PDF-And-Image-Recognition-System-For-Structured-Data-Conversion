@@ -26,14 +26,28 @@ interface MockDb {
   historyByUser: Record<string, HistoryItem[]>;
 }
 
+function emptyDb(): MockDb {
+  return {
+    users: [],
+    sessions: {},
+    jobs: {},
+    apiKeys: {},
+    historyByUser: {},
+  };
+}
+
 function loadDb(): MockDb {
+  const defaults = emptyDb();
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) return JSON.parse(raw) as MockDb;
+    if (!raw) return defaults;
+    const parsed = JSON.parse(raw) as Partial<MockDb>;
+    // Мёржим с дефолтами, чтобы старые сохранёнки без новых полей
+    // не валили обработчики.
+    return { ...defaults, ...parsed };
   } catch {
-    /* ignore */
+    return defaults;
   }
-  return { users: [], sessions: {}, jobs: {}, apiKeys: {}, historyByUser: {} };
 }
 
 function saveDb(db: MockDb): void {
@@ -92,6 +106,41 @@ export async function mockFetch(input: string, init?: RequestInit): Promise<Resp
     db.sessions[newToken] = user.id;
     saveDb(db);
     return jsonResponse({ token: newToken, user: { email: user.email } });
+  }
+
+  if (method === 'POST' && path === '/api/auth/password/reset') {
+    const { email } = JSON.parse(init?.body as string);
+    const user = db.users.find((u) => u.email === email);
+    if (user) {
+      const fresh = 'pwd_' + makeId();
+      user.password = fresh;
+      saveDb(db);
+      // В реальной жизни новый пароль уехал бы на почту. В моке — в консоль.
+      console.info(
+        `%c[mock] Новый пароль для ${email}: ${fresh}`,
+        'background:#fff7e6;color:#b45309;padding:2px 6px;border-radius:4px;',
+      );
+    }
+    // Намеренно отвечаем 204 даже если пользователя нет —
+    // чтобы не палить, какие email зарегистрированы.
+    return new Response(null, { status: 204 });
+  }
+
+  if (method === 'POST' && path === '/api/auth/password/change') {
+    if (!currentUser) return errorResponse('Требуется вход.', 401);
+    const { currentPassword, newPassword } = JSON.parse(init?.body as string);
+    if (currentUser.password !== currentPassword) {
+      return errorResponse('Текущий пароль введён неверно.', 400);
+    }
+    if (typeof newPassword !== 'string' || newPassword.length < 8) {
+      return errorResponse('Новый пароль должен быть не короче 8 символов.', 400);
+    }
+    if (newPassword === currentPassword) {
+      return errorResponse('Новый пароль должен отличаться от текущего.', 400);
+    }
+    currentUser.password = newPassword;
+    saveDb(db);
+    return new Response(null, { status: 204 });
   }
 
   if (method === 'POST' && path === '/api/auth/login') {
